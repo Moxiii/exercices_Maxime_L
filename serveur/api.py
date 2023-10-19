@@ -1,13 +1,23 @@
 from fastapi import FastAPI , Query
 from fastapi.middleware.cors import CORSMiddleware
-from database import get_all_artists , search_artists , get_tracks_by_album , get_albums_by_artist
-
+from database import get_all_artists , search_artists , get_tracks_by_album , get_albums_by_artist,get_random_artists
+from fastapi.responses import HTMLResponse
 app = FastAPI()
-
 @app.get("/")
-async def bdd():
-    artists = get_all_artists()
-    return {"artists": [artist.Name for artist in artists]}
+async def path():
+    url_list = [{"path": route.path, "name": route.name} for route in app.routes]
+    link_list = []
+    for route in url_list:
+        if route["name"]:
+            link_list.append(f'<p><a href="{route["path"]}">{route["name"]}</a></p>')
+        else:
+            link_list.append(f'<p><a href="{route["path"]}">{route["path"]}</a></p>')
+    result = "<br/>".join(link_list)
+    return HTMLResponse(content=result, status_code=200)
+@app.get("/discovery , reponse_model=List[dict]")
+async def discovery():
+    random_artists = get_random_artists()
+    return random_artists
 
 @app.get('/artist/{artist_id}')
 async def get_album(artist_id:int):

@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine , MetaData 
+from sqlalchemy import create_engine , MetaData , func , select 
 from sqlalchemy.orm import sessionmaker
 from models import Album, Artist , Track
 engine = create_engine("sqlite:///../chinook.db")
@@ -38,3 +38,14 @@ def get_albums_by_artist(artist_id: int):
         return albums
     finally:
         db.close()
+
+
+def get_random_artists():
+    db = SessionLocal()
+    try:
+        random_artists = db.query(Artist).order_by(func.random()).limit(5).all()
+        artists_data = [{"id": artist.ArtistId, "name": artist.Name} for artist in random_artists]
+        return artists_data
+    finally:
+        db.close()
+

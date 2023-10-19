@@ -1,2 +1,5 @@
 /chinook.db
 venv/
+serveur/__pycache__/*.pyc
+macenv/
+serveur/__pycache__/

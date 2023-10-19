@@ -39,5 +39,5 @@ while go == True:
     if (choice == 1) :
         search()
     else:
-        break
+        go = False
     
