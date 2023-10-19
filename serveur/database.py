@@ -1,6 +1,7 @@
 from sqlalchemy import create_engine , MetaData , func , select 
 from sqlalchemy.orm import sessionmaker
-from models import Album, Artist , Track
+from models import Album, Artist , Track , Genre
+from sqlalchemy.orm import joinedload
 engine = create_engine("sqlite:///../chinook.db")
 cur = engine.connect()
 metadata = MetaData()
@@ -49,3 +50,22 @@ def get_random_artists():
     finally:
         db.close()
 
+def get_random_artists_by_genre(genre_name):
+    db = SessionLocal()
+    genre_name = genre_name.capitalize()
+    try:
+        random_artists = (
+            db.query(Artist)
+            .join(Album, Album.ArtistId == Artist.ArtistId)
+            .join(Track, Track.AlbumId == Album.AlbumId)
+            .join(Genre, Track.GenreId == Genre.GenreId)
+            .filter(Genre.Name == genre_name)
+            .order_by(func.random())
+            .limit(5)
+            .all()
+        )
+
+        return random_artists
+        
+    finally:
+        db.close()

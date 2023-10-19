@@ -1,6 +1,6 @@
 from fastapi import FastAPI , Query
 from fastapi.middleware.cors import CORSMiddleware
-from database import get_all_artists , search_artists , get_tracks_by_album , get_albums_by_artist,get_random_artists
+from database import get_all_artists ,get_random_artists_by_genre, search_artists , get_tracks_by_album , get_albums_by_artist,get_random_artists
 from fastapi.responses import HTMLResponse
 app = FastAPI()
 @app.get("/")
@@ -16,6 +16,7 @@ async def path():
     return HTMLResponse(content=result, status_code=200)
 @app.get("/discovery , reponse_model=List[dict]")
 async def discovery():
+    ''' Retrun 5 random artists '''
     random_artists = get_random_artists()
     return random_artists
 
@@ -42,3 +43,8 @@ passsing ID on album url for fetch all title on the album by their ID
 '''
     tracks = get_tracks_by_album(album_id)
     return{"tracks":[track.Name for track in tracks]}
+
+@app.get("/discovery/genre/{genre_name}")
+async def discovery_artists_by_genre(genre_name:str):
+    artists = get_random_artists_by_genre(genre_name)
+    return artists
